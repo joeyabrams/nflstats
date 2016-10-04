@@ -1,0 +1,86 @@
+#include "web.h"
+Web::Web(char *host, int port)
+{
+    struct addrinfo hints = {0};
+    struct addrinfo *p, *lladdrs;
+
+    sockfd = socket( AF_INET, SOCK_STREAM, 0 );
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    getaddrinfo(host, "http", &hints, &lladdrs);
+    memcpy(&addr_in, lladdrs->ai_addr, sizeof (struct sockaddr_in ) );
+    str_ip = inet_ntoa(addr_in.sin_addr);
+
+}
+char * Web::peek()
+{
+    return 0;
+}
+string Web::get_ip()
+{
+    return str_ip;
+}
+
+int Web::conn()
+{
+    return connect( sockfd, (struct sockaddr *) &addr_in, sizeof ( addr_in ) );
+}
+
+int Web::get( char *page )
+{
+    char send_buf[64];
+    char recv_buf[1024];
+    char *data;
+
+    int res;
+
+
+    snprintf( send_buf, sizeof( send_buf ), "GET %s HTTP/1.1\r\n", page );
+#ifdef DEBUG
+    printf( "req: [%s]\n", send_buf );
+#endif
+    res = send( sockfd, send_buf, strlen( send_buf ), 0 );
+    
+    if ( res < 0 )
+        return res;
+    send( sockfd, "Host: www.nfl.com\r\n\r\n", strlen("Host: www.nfl.com\r\n\r\n"), 0 );
+    
+    //res = fcnt( sockfd, F_SETFL, O_NONBLOCK );
+    
+    res = recv( sockfd, recv_buf, sizeof( recv_buf ), 0 );
+
+    if ( res < 0 )
+        return res;
+
+#ifdef DEBUG
+    printf("%d bytes received\n", res);
+#endif
+    data = ( char * ) malloc ( sizeof( char ) * res + 1 ); //alloc 1 extra byte for NULL terminator
+    strncpy( data, recv_buf, ( sizeof( char ) * res  ) ); 
+    data[res] = '\0';
+#ifdef DEBUG
+    printf("%d len after first strncpy\n", strlen(data));
+#endif
+    while ( res > 0 )
+    {
+        memset( recv_buf, 0x0, sizeof( recv_buf ) );
+        res = recv( sockfd, recv_buf, sizeof( recv_buf ), 0 );
+        if ( res > 0 )
+        {
+#ifdef DEBUG
+            printf( "Reallocating to [%d + %d] %d bytes\n", strlen(data), res,  ( strlen( data ) + res + 1 ) ); 
+#endif
+            data = ( char * )realloc( data, (sizeof( char ) * ( strlen(data) + res + 1 ) ) );
+            if ( data == NULL )
+                return -1;
+            int end = strlen(data) + res;
+            strncat( data, recv_buf, ( strlen(data) + res));
+            data[end] = '\0';
+
+        }
+
+
+    }
+
+
+}

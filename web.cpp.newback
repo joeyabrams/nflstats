@@ -1,0 +1,123 @@
+#include "web.h"
+Web::Web(char *host, int port)
+{
+    struct addrinfo hints = {0};
+    struct addrinfo *p, *lladdrs;
+
+    sockfd = socket( AF_INET, SOCK_STREAM, 0 );
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    getaddrinfo(host, "http", &hints, &lladdrs);
+    memcpy(&addr_in, lladdrs->ai_addr, sizeof (struct sockaddr_in ) );
+    str_ip = inet_ntoa(addr_in.sin_addr);
+
+}
+void Web::peek()
+{
+    vector <string>::const_iterator it;
+
+    for(it=data.begin(); it != data.end(); it++)
+        cout << it->length() << endl;
+}
+string Web::get_ip()
+{
+    return str_ip;
+}
+
+int Web::getChunkedLength(char *header, int size, int *chunkedLen)
+{
+    char *p;
+    char tmp[size];
+    int i;
+
+    strncpy(tmp, header, size);
+
+    p = strtok(tmp, "\r\n");
+    while ( p != NULL )
+    {
+        if (isdigit(*p))
+        {
+            i += strlen(p) + 2;
+            *chunkedLen= strtol(p, NULL, 16);
+            return i;
+        }
+        i += strlen(p) + 2;
+        p = strtok(NULL, "\r\n");
+    }
+    
+    return -1;
+}
+
+int Web::conn()
+{
+    return connect( sockfd, (struct sockaddr *) &addr_in, sizeof ( addr_in ) );
+}
+
+int Web::get( char *page )
+{
+    char send_buf[64];
+    char recv_buf[1024];
+
+    int chunkedLen;
+    int i;
+    int res, bytesRead = 0;
+
+
+    snprintf( send_buf, sizeof( send_buf ), "GET %s HTTP/1.0\r\n", page );
+#ifdef DEBUG
+    printf( "req: [%s]\n", send_buf );
+#endif
+    res = send( sockfd, send_buf, strlen( send_buf ), 0 );
+    
+    if ( res < 0 )
+        return res;
+    send( sockfd, "Host: www.nfl.com\r\n\r\n", strlen("Host: www.nfl.com\r\n\r\n"), 0 );
+    
+    if ( res < 0 )
+        return res;
+    
+    res = recv( sockfd, recv_buf, sizeof( recv_buf ), 0 );
+
+    if ( res < 0 )
+        return res;
+    i = getChunkedLength(recv_buf, 1024, &chunkedLen);
+
+    //res = fcntl( sockfd, F_SETFL, O_NONBLOCK );
+#ifdef DEBUG
+    printf("%d bytes received\n", res);
+#endif
+    data.push_back(recv_buf);
+    puts(recv_buf);
+    bytesRead += strlen(&recv_buf[i]);
+
+#ifdef DEBUG
+    printf("chunkedLen = %d\n", chunkedLen);
+#endif
+
+    while ( bytesRead < chunkedLen  )
+    {
+        memset( recv_buf, 0x0, sizeof( recv_buf ) );
+        if ( ( chunkedLen - bytesRead ) < sizeof(recv_buf) )
+            res = recv( sockfd, recv_buf, ( chunkedLen - bytesRead ), 0 );
+        else
+            res = recv( sockfd, recv_buf, sizeof( recv_buf ), 0 );
+        
+        if ( res > 0 )
+            data.push_back(recv_buf);
+        puts(recv_buf);
+        bytesRead += res;
+    }
+#ifdef DEBUG
+    printf("bytesRead = %x\n", bytesRead);
+#endif
+   /* i = 0;
+    char c[1];
+    while (i < 40 )
+    {
+        i++;
+        recv(sockfd, c, 1, 0);
+
+        printf("%d->%s ", i, c);
+    }*/
+
+}

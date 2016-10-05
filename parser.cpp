@@ -87,3 +87,21 @@ void Parser::findMatchups()
     }
 }
 
+void Parser::findStats()
+{
+    vector<string>::const_iterator it;
+
+    for (it=data.begin(); it!=data.end(); it++)
+    {
+        if (it->find("td style") != string::npos)
+        {
+#ifdef DEBUG
+            cout << *it << endl;
+#endif
+
+        }
+
+    }
+
+}
+

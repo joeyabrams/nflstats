@@ -80,57 +80,8 @@ int Web::parse_by_newlines(char *buf)
     char *p = buf;
     char *t;
     int i = 0;
-    int flag = 0;
 
-    if (data.size() > 0)
-    {
-        /*
-        * if data already exists in our vector then we need to reassemble
-        * the very last line/string of data as it most likely was broken up in 
-        * the middle of a new line
-        */
-        string tmp = data.back();
-
-        /*
-        * convert the last string in our vector to a c style string.
-        * copy into a buffer and then pop off the string from the vector
-        * we then parse out the first line out of the data buffer which should be
-        * the remaining portion of the last line we parsed out and reassemble
-        * it up to the /r/n by concatenating them together and then pushing it 
-        * back into place on the vector.
-        *
-        * BUG: On the off chance that the data in our buffer was read in perfectly
-        * and finished reading exactly on /r/n this will end up concatenating two
-        * lines together which should have been seperate strings in the vector 
-        */
-        if (tmp.length() > 0 )
-
-        {
-            flag++; //set a flag so that we know we started strtok() process an next
-                    // call should be passed NULL as an argument
-            char cstr[tmp.length()];
-#ifdef DEBUG
-            printf("parse_by_newlines():size=%d\n", tmp.length());
-#endif
-            strcpy(cstr, tmp.c_str());
-            data.pop_back();
-            p = strtok(buf, "\r\n");
-            int len = strlen(p) + tmp.length() + 1;
-            char combined_str[len];
-            memset(combined_str, 0, sizeof(combined_str));
-            strcpy(combined_str, cstr);
-            strncat(combined_str, p, len);
-            data.push_back(combined_str);
-        }
-    }
-    /*
-    * if flag = 0 it's our first call to this function so we haven't called
-    * strtok() above to reassemble the last string in our vector so call it with
-    * buf as parameter otherwise we've already started the strtok() process so call
-    * it with NULL and continue
-    */
-    if (!flag)
-        p = strtok(buf, "\r\n");
+    p = strtok(buf, "\r\n");
     while (p != NULL)
     {
         i++;
@@ -154,6 +105,7 @@ vector<string> Web::get( char *page )
 {
     char send_buf[128];
     char recv_buf[1024];
+    char *all_data;
     vector<string> err;
     int chunkedLen;
     int i;
@@ -188,22 +140,28 @@ vector<string> Web::get( char *page )
     printf("%d bytes received\n", res);
 #endif
 
-    i = parse_by_newlines(recv_buf);
-
-
 
     bytesRead += res;
-
+    all_data = (char *) malloc (sizeof(char) * res);
+    memcpy(all_data, recv_buf, res);
+    
     while ( res > 0  )
     {
         memset( recv_buf, 0x0, sizeof( recv_buf ) );
         
         res = recv( sockfd, recv_buf, sizeof( recv_buf ) - 1, 0 );
-        if ( res > 0 )
-            parse_by_newlines(recv_buf);
-        bytesRead += res;
+        if (res > 0 )
+        {
+            all_data =  (char *) realloc(all_data, (( sizeof(char) * res) + bytesRead ));
+            memcpy(all_data+bytesRead, recv_buf, res);
+            bytesRead += res;
+        }
+
     }
+
+    parse_by_newlines(all_data);
 #ifdef DEBUG
+    puts(all_data);
     printf("bytesRead = %d\n", bytesRead);
 #endif
 

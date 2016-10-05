@@ -8,5 +8,12 @@ int main( int argc, char **argv )
     Parser *p = new Parser(web->get("/schedules/2016/REG5"));
     p->findMatchups();
     p->printMatchups();
+
+    web = new Web("www.sportingcharts.com");
+    web->conn();
+    
+
+    p = new Parser(web->get("/nfl/stats/team-passing-statistics/2016/"));
     //web->peek();
+    p->findStats();
 }

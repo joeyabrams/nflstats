@@ -16,6 +16,7 @@ class Parser
     public:
         Parser(vector<string>);
         void findMatchups();
+        void findStats();
         void printMatchups();
 
 };

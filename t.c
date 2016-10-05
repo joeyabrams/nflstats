@@ -5,12 +5,8 @@
 
 int main()
 {
-    char blah[] = "hello world\r\ntest 13 4\r\njkekejkeje ejk je\r\nkrlkklk\r\nerjekjkejekjejekjej88888";
-
-    char *p = strtok(blah, "\r\n");
-    while (p != NULL)
-    {
-        puts(p);
-        p = strtok(NULL, "\r\n");
-    }
+    char *p;
+    p = realloc(p, 1024);
+    strcpy(p, "hello world");
+    puts(p);
 }

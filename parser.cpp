@@ -95,9 +95,15 @@ void Parser::findStats()
     {
         if (it->find("td style") != string::npos)
         {
+            int spos = 0;
+            int epos = 0;
+
+            string tmp;
 #ifdef DEBUG
             cout << *it << endl;
 #endif
+            spos = it->find("'>", 0) + 2;
+
 
         }
 

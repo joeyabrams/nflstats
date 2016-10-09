@@ -18,7 +18,7 @@ Parser::Parser( vector<string> d )
     { "NO", "New Orleans Saints"},
     { "JAX", "Jacksonville Jaguars"},
     { "CHI", "Chicago Bears"},
-    { "LA", "Los Angelas Rams"},
+    { "LA", "Los Angeles Rams"},
     { "DET", "Detroit Lions"},
     { "PIT", "Pittsburgh Steelers"},
     { "MIA", "Miami Dolphins"},
@@ -29,7 +29,7 @@ Parser::Parser( vector<string> d )
     { "ATL", "Atlanta Falcons"},
     { "SEA", "Seattle Seahawks"},
     { "DAL", "Dallas Cowboys"},
-    { "GB", "Greenbay Packers"},
+    { "GB", "Green Bay Packers"},
     { "IND", "Indianapolis Colts"},
     { "HOU", "Houston Texans"},
     { "NYJ", "New York Jets"},
@@ -48,7 +48,7 @@ void Parser::printMatchups(vector<matchup_t> matchups)
     vector<matchup_t>::const_iterator it;
 
     for ( it=matchups.begin(); it != matchups.end(); it++)
-        cout << it->awayTeam << " vs " << it->homeTeam << endl;
+        cout << it->awayTeam.teamName << " vs " << it->homeTeam.teamName << endl;
 }
 /*
 * this function will search for "awayAbbr" and "homeAbbr" to extract
@@ -87,9 +87,8 @@ void Parser::findMatchups(vector<matchup_t> & matchups)
             if (!teams.count(team))
             {
                 teams.insert(team);
-                match.awayTeam = team;
+                match.awayTeam.teamName = team;
             }
-
         }
         else if ( it->find("homeAbbr") != string::npos )
         {
@@ -112,7 +111,7 @@ void Parser::findMatchups(vector<matchup_t> & matchups)
             if (!teams.count(team))
             {
                 teams.insert(team);
-                match.homeTeam = team;
+                match.homeTeam.teamName = team;
 
                 matchups.push_back(match);
             }
@@ -158,7 +157,7 @@ string Parser::getDataFromColumn(string strbuf, int row)
 }
 
 
-void Parser::getYDSAllowed(matchup_t m)
+void Parser::getYDSAllowed(matchup_t &m)
 {
     vector<string>::const_iterator it;
     string strData;
@@ -166,12 +165,43 @@ void Parser::getYDSAllowed(matchup_t m)
 
     for (it=data.begin(); it!=data.end(); it++)
     {
-        strData =   getDataFromColumn(*it, 1);
-        if (strData == teamAbbreviations[m.awayTeam])
-        {
-            cout << "YDS Allowed Avg: " << getDataFromColumn(*it, 5);
-            break;
-        }
+        strData =   getDataFromColumn(*it, 2);
+        if (strData == teamAbbreviations[m.awayTeam.teamName])
+            m.awayTeam.ydsAllowedPerGame = stof(getDataFromColumn(*it, 5));
+        else if (strData == teamAbbreviations[m.homeTeam.teamName])
+            m.homeTeam.ydsAllowedPerGame = stof(getDataFromColumn(*it, 5));
+        
+    }
+
+}
+
+string Parser::remove_comma(string buf)
+{
+    if (buf.find(",") != string::npos)
+    {
+        int pos = buf.find(",");
+        string tmp = buf.substr(0, pos);
+        tmp += buf.substr(pos+1);
+        return tmp;
+    }
+    
+    else
+        return buf;
+}
+void Parser::getTotalYDS(matchup_t &m)
+{
+    vector<string>::const_iterator it;
+    string strData;
+    int current_position = 0;
+
+    for (it=data.begin(); it!=data.end(); it++)
+    {
+        strData =   getDataFromColumn(*it, 2);
+        if (strData == teamAbbreviations[m.awayTeam.teamName])
+            m.awayTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+        else if (strData == teamAbbreviations[m.homeTeam.teamName])
+            m.homeTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+        
     }
 
 }

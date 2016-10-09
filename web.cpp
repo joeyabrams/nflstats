@@ -6,7 +6,7 @@
 * be used in the connect() method as well as retrieve the dotted quad IP 
 * which can be retrieved via get_ip()
 */
-Web::Web(char *host, int port)
+Web::Web(string host, int port)
 {
     struct addrinfo hints = {0};
     struct addrinfo *p, *lladdrs;
@@ -15,7 +15,7 @@ Web::Web(char *host, int port)
     sockfd = socket( AF_INET, SOCK_STREAM, 0 );
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    getaddrinfo(host, "http", &hints, &lladdrs);
+    getaddrinfo(host.c_str(), "http", &hints, &lladdrs);
     memcpy(&addr_in, lladdrs->ai_addr, sizeof (struct sockaddr_in ) );
     str_ip = inet_ntoa(addr_in.sin_addr);
 
@@ -101,7 +101,7 @@ int Web::conn()
 * returns the webpage as a vector of strings
 * empty vector returned on error
 */
-vector<string> Web::get( char *page )
+vector<string> Web::get( string page )
 {
     char send_buf[128];
     char recv_buf[1024];
@@ -114,7 +114,7 @@ vector<string> Web::get( char *page )
 
     memset(send_buf, 0, sizeof(send_buf));
     memset(recv_buf, 0, sizeof(recv_buf));
-    snprintf( send_buf, sizeof( send_buf ), "GET %s HTTP/1.0\r\n", page );
+    snprintf( send_buf, sizeof( send_buf ), "GET %s HTTP/1.0\r\n", page.c_str() );
 #ifdef DEBUG
     printf( "req: [%s]\n", send_buf );
 #endif

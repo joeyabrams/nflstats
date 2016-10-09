@@ -29,9 +29,9 @@ class Web
         
     public:
 
-        Web(char *host, int port=80);
+        Web(string host, int port=80);
         string get_ip ();
         int conn();
-        vector<string> get(char *);
+        vector<string> get(string);
         void peek();
 };

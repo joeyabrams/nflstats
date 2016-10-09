@@ -3,14 +3,47 @@
 
 Parser::Parser( vector<string> d )
 {
+
+    teamAbbreviations = { {"SD", "New York Giants"}, 
+    { "DEN", "Denver Broncos"},
+    { "SF", "San Francisco 49ers"},
+    { "BUF", "Buffalo Bills"},
+    { "PHI", "Philadelphia Eagles"},
+    { "WAS", "Washington Redskins"},
+    { "CLE", "Cleveland Browns"},
+    { "TEN", "Tennessee Titans"},
+    { "BAL", "Baltimore Ravens"},
+    { "NYG", "New York Giants"},
+    { "CAR", "Carolina Panthers"},
+    { "NO", "New Orleans Saints"},
+    { "JAX", "Jacksonville Jaguars"},
+    { "CHI", "Chicago Bears"},
+    { "LA", "Los Angelas Rams"},
+    { "DET", "Detroit Lions"},
+    { "PIT", "Pittsburgh Steelers"},
+    { "MIA", "Miami Dolphins"},
+    { "CIN", "Cincinnati Bengals"},
+    { "NE", "New England Patriots"},
+    { "KC", "Kansas City Chiefs"},
+    { "OAK", "Oakland Raiders"},
+    { "ATL", "Atlanta Falcons"},
+    { "SEA", "Seattle Seahawks"},
+    { "DAL", "Dallas Cowboys"},
+    { "GB", "Greenbay Packers"},
+    { "IND", "Indianapolis Colts"},
+    { "HOU", "Houston Texans"},
+    { "NYJ", "New York Jets"},
+    { "ARI", "Arizona Cardinals"}};
     this->data = d;
 }
+
+
 /*
 * just iterate through and print out matchups
 * todo: overload ostream maybe to make it print more naturally
 */
 
-void Parser::printMatchups()
+void Parser::printMatchups(vector<matchup_t> matchups)
 {
     vector<matchup_t>::const_iterator it;
 
@@ -25,7 +58,7 @@ void Parser::printMatchups()
 * processing duplicates.
 */
 
-void Parser::findMatchups()
+void Parser::findMatchups(vector<matchup_t> & matchups)
 {
     vector<string>::const_iterator it;
     set<string> teams;
@@ -125,7 +158,7 @@ string Parser::getDataFromColumn(string strbuf, int row)
 }
 
 
-void Parser::getYDSAllowed()
+void Parser::getYDSAllowed(matchup_t m)
 {
     vector<string>::const_iterator it;
     string strData;
@@ -133,65 +166,12 @@ void Parser::getYDSAllowed()
 
     for (it=data.begin(); it!=data.end(); it++)
     {
-        strData =   getDataFromColumn(*it, 2);
-        if (strData != "null")
-            cout <<"Team: " <<  strData;
-        strData = getDataFromColumn(*it, 5);
-        if (strData != "null")
-            cout << "Avg. YDS Allowed per Game: " << strData << endl;
-    }
-
-}
-
-void Parser::findPassingStats()
-{
-    vector<string>::const_iterator it;
-
-    for (it=data.begin(); it!=data.end(); it++)
-    {
-        if (it->find("td style") != string::npos)
+        strData =   getDataFromColumn(*it, 1);
+        if (strData == teamAbbreviations[m.awayTeam])
         {
-            int start_pos = 0;
-            int end_pos = 0;
-            int len = 0;
-
-            string tmp;
-#ifdef DEBUG
-            cout << *it << endl;
-#endif
-            start_pos = it->find("'>", 0) + 2;
-            end_pos = it->find ("<", start_pos);
-            len = end_pos - start_pos;
-            cout << it->substr(start_pos, len) << endl;
-
-            start_pos = end_pos;
-           
-            for (int i = 0; i <= 3; i++)
-                start_pos = it->find("</td>", start_pos) + 2;
-           
-
-            start_pos = it->find("\">", start_pos) + 2;
-            end_pos = it->find("<", start_pos);
-            len = end_pos - start_pos;
-
-            cout << "Passing YDS: " << it->substr(start_pos, len) << endl;
-
-            start_pos = end_pos;
-
-            for (int i = 0; i <= 2; i++)
-                start_pos = it->find("</td>", start_pos) + 2;
-
-            start_pos = it->find("\">", start_pos) + 2;
-            end_pos = it->find("<", start_pos);
-            len = end_pos - start_pos;
-
-            cout << "TDs: " << it->substr(start_pos, len) << endl;
-
-
-
+            cout << "YDS Allowed Avg: " << getDataFromColumn(*it, 5);
+            break;
         }
-
     }
 
 }
-

@@ -1,7 +1,9 @@
 #include <vector>
 #include <string>
+#include <map>
 
 using namespace std;
+
 typedef struct matchup
 {
     string awayTeam;
@@ -12,13 +14,14 @@ class Parser
 {
     private:
         vector<string> data;
-        vector<matchup_t> matchups;
+        map<string, string> teamAbbreviations;
     public:
         Parser(vector<string>);
-        void findMatchups();
+        void findMatchups(vector<matchup_t> &);
         void findPassingStats();
-        void printMatchups();
+        void printMatchups(vector<matchup_t>);
         string getDataFromColumn(string, int);
-        void getYDSAllowed();
+        void getYDSAllowed(matchup_t);
+        
 
 };

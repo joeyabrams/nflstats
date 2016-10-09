@@ -16,7 +16,9 @@ class Parser
     public:
         Parser(vector<string>);
         void findMatchups();
-        void findStats();
+        void findPassingStats();
         void printMatchups();
+        string getDataFromColumn(string, int);
+        void getYDSAllowed();
 
 };

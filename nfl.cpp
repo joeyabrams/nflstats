@@ -13,9 +13,10 @@ int main( int argc, char **argv )
     web = new Web("www.sportingcharts.com");
     web->conn();
     
+    //p = new Parser(web->get("/nfl/stats/team-passing-statistics/2016/"));
 
-    p = new Parser(web->get("/nfl/stats/team-passing-statistics/2016/"));
+    p = new Parser(web->get("/nfl/stats/team-yards-against-per-game/2016/"));
     //web->peek();
-    p->findPassingStats();
+    //p->findPassingStats();
     p->getYDSAllowed();
 }

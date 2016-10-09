@@ -87,7 +87,63 @@ void Parser::findMatchups()
     }
 }
 
-void Parser::findStats()
+/*
+* strbuf = html table/tags to parse
+* row = column to retrieve data from
+* returns data from the specified row
+*
+* handles edge cases where there is a link embedded inside
+* the row ie: <td><a href..</a></td> instread of <td> data </td>
+*
+*/
+
+string Parser::getDataFromColumn(string strbuf, int row)
+{
+    int start_pos = 0;
+    int end_pos = 0;
+    int len = 0;
+
+
+    if (strbuf.find("td style") != string::npos)
+    {
+        for ( int i = 0; i < row; i++)
+            start_pos = strbuf.find("td style", start_pos) + 1;
+
+        start_pos = strbuf.find(">", start_pos) +1;
+        if (strbuf[start_pos+1] == 'a')
+            start_pos = strbuf.find(">", start_pos) + 1;
+            
+        end_pos = strbuf.find("<", start_pos);
+        len = end_pos - start_pos;
+        
+        return strbuf.substr(start_pos, len);
+
+    }
+
+    return "null";
+
+}
+
+
+void Parser::getYDSAllowed()
+{
+    vector<string>::const_iterator it;
+    string strData;
+    int current_position = 0;
+
+    for (it=data.begin(); it!=data.end(); it++)
+    {
+        strData =   getDataFromColumn(*it, 2);
+        if (strData != "null")
+            cout <<"Team: " <<  strData;
+        strData = getDataFromColumn(*it, 5);
+        if (strData != "null")
+            cout << "Avg. YDS Allowed per Game: " << strData << endl;
+    }
+
+}
+
+void Parser::findPassingStats()
 {
     vector<string>::const_iterator it;
 
@@ -95,14 +151,42 @@ void Parser::findStats()
     {
         if (it->find("td style") != string::npos)
         {
-            int spos = 0;
-            int epos = 0;
+            int start_pos = 0;
+            int end_pos = 0;
+            int len = 0;
 
             string tmp;
 #ifdef DEBUG
             cout << *it << endl;
 #endif
-            spos = it->find("'>", 0) + 2;
+            start_pos = it->find("'>", 0) + 2;
+            end_pos = it->find ("<", start_pos);
+            len = end_pos - start_pos;
+            cout << it->substr(start_pos, len) << endl;
+
+            start_pos = end_pos;
+           
+            for (int i = 0; i <= 3; i++)
+                start_pos = it->find("</td>", start_pos) + 2;
+           
+
+            start_pos = it->find("\">", start_pos) + 2;
+            end_pos = it->find("<", start_pos);
+            len = end_pos - start_pos;
+
+            cout << "Passing YDS: " << it->substr(start_pos, len) << endl;
+
+            start_pos = end_pos;
+
+            for (int i = 0; i <= 2; i++)
+                start_pos = it->find("</td>", start_pos) + 2;
+
+            start_pos = it->find("\">", start_pos) + 2;
+            end_pos = it->find("<", start_pos);
+            len = end_pos - start_pos;
+
+            cout << "TDs: " << it->substr(start_pos, len) << endl;
+
 
 
         }

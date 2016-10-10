@@ -199,13 +199,15 @@ void Parser::getTotalYDS(matchup_t &m)
         strData =   getDataFromColumn(*it, 2);
         if (strData == teamAbbreviations[m.awayTeam.teamName])
         {
-            m.awayTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            //m.awayTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            m.awayTeam.totalYdsPerGame = stof(getDataFromColumn(*it, 4));
             m.awayTeam.rushPercentage = stof(getDataFromColumn(*it, 8));
             m.awayTeam.passPercentage = 100.0 - m.awayTeam.rushPercentage;
         }
         else if (strData == teamAbbreviations[m.homeTeam.teamName])
         {
-            m.homeTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            //m.homeTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            m.homeTeam.totalYdsPerGame = stof(getDataFromColumn(*it, 4));
             m.homeTeam.rushPercentage = stof(getDataFromColumn(*it, 8));
             m.homeTeam.passPercentage = 100.0 - m.homeTeam.rushPercentage;
         }
@@ -245,9 +247,9 @@ void Parser::getRushYDSAllowed(matchup_t &m)
     {
         strData =   getDataFromColumn(*it, 2);
         if (strData == teamAbbreviations[m.awayTeam.teamName])
-           m.awayTeam.takeAways = stof(getDataFromColumn(*it, 5));
+           m.awayTeam.runYdsAllowedPerGame = stof(getDataFromColumn(*it, 5));
         else if (strData == teamAbbreviations[m.homeTeam.teamName])
-           m.awayTeam.takeAways = stof(getDataFromColumn(*it, 5));
+           m.homeTeam.runYdsAllowedPerGame = stof(getDataFromColumn(*it, 5));
     }
 
 }

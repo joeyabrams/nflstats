@@ -51,31 +51,24 @@ int main( int argc, char **argv )
     for (it=matchups.begin(); it != matchups.end(); it++)
         p->getRushYDSAllowed(*it);
 
-    cout << "Yards Allowed: " << endl;
-    for (it=matchups.begin(); it != matchups.end(); it++)
-    {
-        cout << it->awayTeam.teamName << " " << it->awayTeam.ydsAllowedPerGame << endl;
-        cout << it->homeTeam.teamName << " " << it->homeTeam.ydsAllowedPerGame << endl;
-    } 
-    
-    cout << "Total Yards: " << endl;
-    for (it=matchups.begin(); it != matchups.end(); it++)
-    {
-        cout << it->awayTeam.teamName << " " << it->awayTeam.totalYdsPerGame << endl;
-        cout << it->homeTeam.teamName << " " << it->homeTeam.totalYdsPerGame << endl;
-    } 
+    m = matchups[5];
 
-    cout << "Run %: " << endl;
-    for (it=matchups.begin(); it != matchups.end(); it++)
-    {
-        cout << it->awayTeam.teamName << " " << it->awayTeam.rushPercentage << endl;
-        cout << it->homeTeam.teamName << " " << it->homeTeam.rushPercentage << endl;
-    }
+    cout << "==================" << endl;
+    cout << m.awayTeam.teamName << endl;
+    cout << "Defense" << endl;
+    cout << "Total YDS Allowed per Game: " << m.awayTeam.ydsAllowedPerGame << endl;
+    cout << "Run YDS Allowed per Game: " << m.awayTeam.runYdsAllowedPerGame << endl;
+    cout << "Offsense" << endl;
+    cout << "Total YDS Gained per Game: " << m.awayTeam.totalYdsPerGame << endl;
+    cout << "Rush %: " << m.awayTeam.rushPercentage << "\t" << "Pass %: " << m.awayTeam.passPercentage << endl;
+    cout << "Special Teams" << endl;
+    cout << "Takeaways +/-: " << m.awayTeam.takeAways << endl;
 
-    cout << "Takeaways: " << endl;
-    for (it=matchups.begin(); it != matchups.end(); it++)
-    {
-        cout << it->awayTeam.teamName << " " << it->awayTeam.takeAways << endl;
-        cout << it->homeTeam.teamName << " " << it->homeTeam.takeAways << endl;
-    }
+
+
+
+
+
+
+
 }

@@ -4,9 +4,12 @@ typedef struct teamData
 {
     string teamName;
     float ydsAllowedPerGame;
+    float runYdsAllowedPerGame;
+    float passYdsAllowedPerGame;
     float totalYdsPerGame;
     float rushPercentage;
     float passPercentage;
+    int takeAways;
 } teamData_t;
 
 typedef struct matchup

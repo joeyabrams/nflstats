@@ -23,4 +23,6 @@ class Parser
         void getYDSAllowed(matchup_t &);
         void getTotalYDS(matchup_t &);
 
+        void getTakeAways(matchup_t &);
+        void getRushYDSAllowed(matchup_t &);
 };

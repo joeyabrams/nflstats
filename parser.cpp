@@ -198,10 +198,56 @@ void Parser::getTotalYDS(matchup_t &m)
     {
         strData =   getDataFromColumn(*it, 2);
         if (strData == teamAbbreviations[m.awayTeam.teamName])
+        {
             m.awayTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            m.awayTeam.rushPercentage = stof(getDataFromColumn(*it, 8));
+            m.awayTeam.passPercentage = 100.0 - m.awayTeam.rushPercentage;
+        }
         else if (strData == teamAbbreviations[m.homeTeam.teamName])
+        {
             m.homeTeam.totalYdsPerGame = stof(remove_comma(getDataFromColumn(*it, 3)));
+            m.homeTeam.rushPercentage = stof(getDataFromColumn(*it, 8));
+            m.homeTeam.passPercentage = 100.0 - m.homeTeam.rushPercentage;
+        }
         
+    }
+
+}
+
+void Parser::getTakeAways(matchup_t &m)
+{
+    vector<string>::const_iterator it;
+    string strData;
+    int current_position = 0;
+
+    for (it=data.begin(); it!=data.end(); it++)
+    {
+        strData =   getDataFromColumn(*it, 2);
+        if (strData == teamAbbreviations[m.awayTeam.teamName])
+        {
+           m.awayTeam.takeAways = stoi(getDataFromColumn(*it, 11));
+        }
+        else if (strData == teamAbbreviations[m.homeTeam.teamName])
+        {
+           m.homeTeam.takeAways = stoi(getDataFromColumn(*it, 11));
+        }
+    }
+
+}
+
+void Parser::getRushYDSAllowed(matchup_t &m)
+{
+    vector<string>::const_iterator it;
+    string strData;
+    int current_position = 0;
+
+    for (it=data.begin(); it!=data.end(); it++)
+    {
+        strData =   getDataFromColumn(*it, 2);
+        if (strData == teamAbbreviations[m.awayTeam.teamName])
+           m.awayTeam.takeAways = stof(getDataFromColumn(*it, 5));
+        else if (strData == teamAbbreviations[m.homeTeam.teamName])
+           m.awayTeam.takeAways = stof(getDataFromColumn(*it, 5));
     }
 
 }

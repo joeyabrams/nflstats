@@ -27,6 +27,9 @@ int main( int argc, char **argv )
 
     for (it=matchups.begin(); it != matchups.end(); it++)
         p->getYDSAllowed(*it);
+    
+    delete web;
+
     web = new Web("www.sportingcharts.com");
     web->conn();
     p = new Parser(web->get("/nfl/stats/team-overall-yards-statistics/2016/"));
@@ -35,6 +38,7 @@ int main( int argc, char **argv )
     for (it=matchups.begin(); it != matchups.end(); it++)
         p->getTotalYDS(*it);
 
+    delete web;
 
     web = new Web("www.sportingcharts.com");
     web->conn();
@@ -43,6 +47,8 @@ int main( int argc, char **argv )
 
     for (it=matchups.begin(); it != matchups.end(); it++)
         p->getTakeAways(*it);
+
+    delete web;
 
     web = new Web("www.sportingcharts.com");
     web->conn();

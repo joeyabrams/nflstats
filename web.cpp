@@ -164,6 +164,7 @@ vector<string> Web::get( string page )
     puts(all_data);
     printf("bytesRead = %d\n", bytesRead);
 #endif
+    free(all_data);
 
     return data;
 }

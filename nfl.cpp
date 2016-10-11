@@ -1,6 +1,8 @@
 //test
 #include "web.h"
 #include "parser.h"
+#include "analyze.h"
+
 
 
 int main( int argc, char **argv )
@@ -69,6 +71,8 @@ int main( int argc, char **argv )
     cout << "Rush %: " << m.awayTeam.rushPercentage << "\t" << "Pass %: " << m.awayTeam.passPercentage << endl;
     cout << "Special Teams" << endl;
     cout << "Takeaways +/-: " << m.awayTeam.takeAways << endl;
+
+    Analyze a(matchups[2]);
 
 
 

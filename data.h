@@ -1,5 +1,7 @@
 #include <string>
 using namespace std;
+#ifndef DATA_H
+#define DATA_H
 typedef struct teamData
 {
     string teamName;
@@ -17,3 +19,4 @@ typedef struct matchup
     teamData_t awayTeam;
     teamData_t homeTeam;
 } matchup_t;
+#endif

@@ -12,7 +12,7 @@ int main( int argc, char **argv )
 
     Web *web = new Web("www.nfl.com");
     web->conn();
-    Parser *p = new Parser(web->get("/schedules/2016/REG6"));
+    Parser *p = new Parser(web->get("/schedules"));
     p->findMatchups(matchups);
     p->printMatchups(matchups);
     matchup_t m;
@@ -60,7 +60,7 @@ int main( int argc, char **argv )
         p->getRushYDSAllowed(*it);
 
     m = matchups[5];
-
+/*
     cout << "==================" << endl;
     cout << m.awayTeam.teamName << endl;
     cout << "Defense" << endl;
@@ -70,10 +70,18 @@ int main( int argc, char **argv )
     cout << "Total YDS Gained per Game: " << m.awayTeam.totalYdsPerGame << endl;
     cout << "Rush %: " << m.awayTeam.rushPercentage << "\t" << "Pass %: " << m.awayTeam.passPercentage << endl;
     cout << "Special Teams" << endl;
-    cout << "Takeaways +/-: " << m.awayTeam.takeAways << endl;
-
-    Analyze a(matchups[2]);
-
+    cout << "Takeaways +/-: " << m.awayTeam.takeAways << endl;    
+*/
+    Analyze a(matchups);
+    for (it=matchups.begin(); it != matchups.end(); it++)
+    {
+        a.homeField(*it);
+        a.analyzeDefense(*it);
+        a.analyzeOffense(*it);
+        a.analyzeSpecialTeams(*it);
+        cout << it->homeTeam.teamName << it->homeTeam.confidence << endl;
+        cout << it->awayTeam.teamName << it->awayTeam.confidence << endl;
+    }
 
 
 

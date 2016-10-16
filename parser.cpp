@@ -247,9 +247,16 @@ void Parser::getRushYDSAllowed(matchup_t &m)
     {
         strData =   getDataFromColumn(*it, 2);
         if (strData == teamAbbreviations[m.awayTeam.teamName])
+        {
            m.awayTeam.runYdsAllowedPerGame = stof(getDataFromColumn(*it, 5));
+           m.awayTeam.passYdsAllowedPerGame = m.awayTeam.ydsAllowedPerGame - m.awayTeam.runYdsAllowedPerGame;
+
+        }
         else if (strData == teamAbbreviations[m.homeTeam.teamName])
+        {
            m.homeTeam.runYdsAllowedPerGame = stof(getDataFromColumn(*it, 5));
+           m.homeTeam.passYdsAllowedPerGame = m.homeTeam.ydsAllowedPerGame - m.homeTeam.runYdsAllowedPerGame;
+        }
     }
 
 }

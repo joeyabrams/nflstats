@@ -12,6 +12,7 @@ typedef struct teamData
     float rushPercentage;
     float passPercentage;
     int takeAways;
+    float confidence = 0.5;
 } teamData_t;
 
 typedef struct matchup
